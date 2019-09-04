@@ -8,6 +8,7 @@ A sample Laravel app for monitoring the status of remote servers. This includes 
 - MySQL
 - Beanstalkd
 
+You can read the full tutorial at: [https://pusher.com/tutorials/server-health-monitor-laravel](https://pusher.com/tutorials/server-health-monitor-laravel)
 
 ### Prerequisites
 
