@@ -6,11 +6,11 @@ use Symfony\Component\Process\Process;
 
 class MemoryUsage extends CheckDefinition
 {
-  public $command = "";
+  public $command = "cat /proc/meminfo";
 
   public function resolve(Process $process)
   {
-    $percentage = $this->getMemoryUsage();
+    $percentage = $this->getMemoryUsage($process->getOutput());
 
     $message = "usage at {$percentage}%";
     $thresholds = config('server-monitor.memory_usage_threshold');
@@ -29,20 +29,11 @@ class MemoryUsage extends CheckDefinition
   }
 
 
-  protected function getMemoryUsage(): float
+  protected function getMemoryUsage(string $commandOutput): float
   {
-    $fh = fopen('/proc/meminfo', 'r');
-    $mem = 0;
-    $all_str = '';
+    preg_match_all('/(\d+)/', $commandOutput, $pieces);
 
-    while ($line = fgets($fh)) {
-        $all_str .= $line;
-    }
-    fclose($fh);
-
-    preg_match_all('/(\d+)/', $all_str, $pieces);
-
-    $used = round($pieces[0][6] / $pieces[0][0], 2);
+    $used = round(($pieces[0][6] / $pieces[0][0]) * 100, 2);
     return $used;
   }
 }
